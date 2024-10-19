@@ -98,6 +98,7 @@ class Dataset(torch.utils.data.Dataset):
                 joints3D = self._load_joints3D(ind, frame_ix)
                 joints3D = joints3D - joints3D[0, 0, :]
                 ret = to_torch(joints3D)
+                print('xyz분기로 진입합니다.NONONO1')
                 if self.translation:
                     ret_tr = ret[:, 0, :]
             else:
@@ -107,6 +108,7 @@ class Dataset(torch.utils.data.Dataset):
                     raise ValueError("Can't extract translations.")
                 ret_tr = self._load_translation(ind, frame_ix)
                 ret_tr = to_torch(ret_tr - ret_tr[0])
+                print('xyz분기로 진입합니다. NONONO1')
 
         if pose_rep != "xyz":
             if getattr(self, "_load_rotvec", None) is None:
@@ -116,6 +118,7 @@ class Dataset(torch.utils.data.Dataset):
                 if not self.glob:
                     pose = pose[:, 1:, :]
                 pose = to_torch(pose)
+                # print('PASS')
                 if pose_rep == "rotvec":
                     ret = pose
                 elif pose_rep == "rotmat":
@@ -123,12 +126,15 @@ class Dataset(torch.utils.data.Dataset):
                 elif pose_rep == "rotquat":
                     ret = geometry.axis_angle_to_quaternion(pose)
                 elif pose_rep == "rot6d":
+                    # print('rot6d변환분기')
                     ret = geometry.matrix_to_rotation_6d(geometry.axis_angle_to_matrix(pose))
         if pose_rep != "xyz" and self.translation:
             padded_tr = torch.zeros((ret.shape[0], ret.shape[2]), dtype=ret.dtype)
             padded_tr[:, :3] = ret_tr
             ret = torch.cat((ret, padded_tr[:, None]), 1)
+            print('xyz분기로 진입합니다. NONONO2')
         ret = ret.permute(1, 2, 0).contiguous()
+        
         return ret.float()
 
     def _get_item_data_index(self, data_index):
@@ -159,7 +165,7 @@ class Dataset(torch.utils.data.Dataset):
             #                   -[o--][o--][o--]o
             # If there are too much frames required
             if num_frames > nframes:
-                fair = False  # True
+                fair = False  # True # False로 설정되어있으면 마지막 프레임을 고정으로 양을 늘립니다.
                 if fair:
                     # distills redundancy everywhere
                     choices = np.random.choice(range(nframes),
@@ -182,6 +188,7 @@ class Dataset(torch.utils.data.Dataset):
                     else:
                         step = self.sampling_step
                 elif self.sampling == "random_conseq":
+                    print('random_conseq 진입')
                     step = random.randint(1, step_max)
 
                 lastone = step * (num_frames - 1)
@@ -190,6 +197,7 @@ class Dataset(torch.utils.data.Dataset):
                 frame_ix = shift + np.arange(0, lastone + 1, step)
 
             elif self.sampling == "random":
+                print('random 진입')
                 choices = np.random.choice(range(nframes),
                                            num_frames,
                                            replace=False)
@@ -198,7 +206,7 @@ class Dataset(torch.utils.data.Dataset):
             else:
                 raise ValueError("Sampling not recognized.")
 
-        inp, target = self.get_pose_data(data_index, frame_ix)
+        inp, target = self.get_pose_data(data_index, frame_ix) #pose label 반환
         return inp, target
 
     def get_label_sample(self, label, n=1, return_labels=False, return_index=False):
