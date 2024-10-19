@@ -1,188 +1,59 @@
-# ACTOR
+# **Flying-motion Generation via Motion Dataset Adaptation**
 
-Official Pytorch implementation of the paper [**"Action-Conditioned 3D Human Motion Synthesis
-with Transformer VAE"**](https://arxiv.org/abs/2104.05670), [ICCV 2021](http://iccv2021.thecvf.com/home).
+- 이 프로젝트는 Action-label based Motion Generation Network인 **ACTOR**를 커스텀 데이터셋으로 재학습해 결과를 확인한 프로젝트임.
+- 데이터 학습을 위해 네트워크의 일부를 수정했고, 원본 리드미는 [ACTOR_README.md](https://github.com/JuicyJeong/ACTOR_jw/ACTOR_README.md)에서 확인할 수 있음.
+- 이 내용을 바탕으로 **VRST 2024 학회 포스터 세션**에 참여했음. 자세한 내용은 [Paper Link](https://dl.acm.org/doi/10.1145/3641825.3689507)에서 확인할 수 있음.
 
-Please visit our [**webpage**](https://imagine.enpc.fr/~petrovim/actor/) for more details.
+## 프로젝트에서 기여한 점:
 
-![teaser_light](visuals/bigteaser_white.png#gh-light-mode-only)![teaser_dark](visuals/bigteaser_white_neg.png#gh-dark-mode-only)
+- 데이터 형태 파악 및 데이터셋 샘플링
+- 데이터셋 일괄 전처리
+- 네트워크 학습을 위한 데이터셋 설정
 
+## Motivation
 
-#### Bibtex
-If you find this code useful in your research, please cite:
+동작 생성 네트워크에서 기존의 사람 움직임을 생성하는 건 비교적 쉬움. 하지만 학습된 적 없는 동작을 생성하는 건 어려움이 따름. 예를 들어, 가상 환경의 아바타가 공중을 나는 동작을 생성하는 건 동작 생성 네트워크에서 어려운 작업임.
 
-```
-@INPROCEEDINGS{petrovich21actor,
-  title     = {Action-Conditioned 3{D} Human Motion Synthesis with Transformer {VAE}},
-  author    = {Petrovich, Mathis and Black, Michael J. and Varol, G{\"u}l},
-  booktitle = {International Conference on Computer Vision (ICCV)},
-  year      = {2021}
-}
-```
+## 제안 방법
 
-## Installation :construction_worker:
-### 1. Create conda environment
+이 프로젝트는 아바타의 비행 동작을 동작 생성 네트워크에서 생성할 수 있도록 기존의 데이터셋을 변형해 일부를 샘플링한 후, 적은 양의 데이터를 동작 생성 네트워크에 훈련시켜 결과를 확인함.
+{파이프라인 사진 입력}
 
-```
-conda env create -f environment.yml
-conda activate actor
-```
+전체 데이터셋에 대해 일괄적으로 전처리를 진행함.
 
-**Or** install the following packages in your pytorch environnement:
-```bash
-pip install tensorboard
-pip install matplotlib
-pip install ipdb
-pip install sklearn
-pip install pandas
-pip install tqdm
-pip install imageio
-pip install pyyaml
-pip install smplx
-pip install chumpy
-```
-The code was tested on Python 3.8 and PyTorch 1.7.1.
+전처리는 간단하며, SMPL 포맷 형식의 아바타에서 Pelvis 관절과 Neck 관절의 각도를 조절하여 허공에 떠 있는 동작처럼 보이게 함.
 
-### 2. Download the datasets
-**For all the datasets, be sure to read and follow their license agreements, and cite them accordingly.**
+{여기에 관련된 사진 추가}
 
-For more information about the datasets we use in this research, please check this [page](DATASETS.md), where we provide information on how we obtain/process the datasets and their citations. Please cite the original references for each of the datasets as indicated.
+python
+Rotate AMASS 코드
+{여기에 rotate amass 코드 추가}
 
-Please install gdown to download directly from Google Drive and then:
-```bash
-bash prepare/download_datasets.sh
-```
+## 데이터셋 샘플링 및 구축
+비행 동작처럼 보이는 동작들을 임의로 선정한 action label을 바탕으로 소규모 데이터셋을 샘플링함.
 
-**Update**: Unfortunately, the NTU13 dataset (derived from NTU) is no longer available.
+전처리된 데이터셋 중 일부 동작을 선정하여 새로운 소규모 샘플링 데이터셋을 구축함.
+
+대규모 데이터셋에는 동작 라벨이 클래스로 구분된 것이 아니라, 모션과 텍스트 설명 파일이 일대일로 매핑되어 있어서 동작 선정에 어려움이 있었음.
 
 
-### 3. Download some **SMPL** files
-```bash
-bash prepare/download_smpl_files.sh
-```
+### 해결 방법
+모든 텍스트 설명을 하나의 딕셔너리 형태로 병합한 후, 라벨 키워드를 검색해 해당 데이터를 샘플링하여 데이터셋을 구성함.
 
-This will download the SMPL neutral model from this [**github repo**](https://github.com/classner/up/blob/master/models/3D/basicModel_neutral_lbs_10_207_0_v1.0.0.pkl) and additionnal files.
+* 텍스트 병합 후 검색 코드
+{텍스트 병합 및 검색 코드 추가}
 
-If you want to integrate the male and the female versions, you must:
-- Download the models from the [**SMPL website**](https://smpl.is.tue.mpg.de/)
-- Move them to ``models/smpl``
-- Change the ``SMPL_MODEL_PATH`` variable in ``src/config.py`` accordingly.
+## 데이터 학습 및 결과
+모션 생성 네트워크에 커스텀 데이터셋을 학습시키기 위해 별도의 세팅이 필요했으며, 데이터 입력을 위한 스크립트 작업을 진행함.
 
-
-### 4. Download the action recogition models
-```bash
-bash prepare/download_recognition_models.sh
-```
-
-Action recognition models are used to extract motion features for evaluation.
-
-For **NTU13** and **HumanAct12**, we use the action recognition models directly from [**Action2Motion** project](https://ericguo5513.github.io/action-to-motion/).
-
-For the **UESTC** dataset, we train an action recognition model using [**STGCN**](https://arxiv.org/abs/1709.04875), with this command line:
-```bash
-python -m src.train.train_stgcn --dataset uestc --extraction_method vibe --pose_rep rot6d --num_epochs 100 --snapshot 50 --batch_size 64 --lr 0.0001 --num_frames 60 --view all --sampling conseq --sampling_step 1 --glob --no-translation --folder recognition_training
-```
-
-## How to use ACTOR :rocket:
-### NTU13
-#### Training
-```bash
-python -m src.train.train_cvae --modelname cvae_transformer_rc_rcxyz_kl --pose_rep rot6d --lambda_kl 1e-5 --jointstype vertices --batch_size 20 --num_frames 60 --num_layers 8 --lr 0.0001 --glob --translation --no-vertstrans --dataset DATASET --num_epochs 2000 --snapshot 100 --folder exp/ntu13
-```
-
-### HumanAct12
-#### Training
-```bash
-python -m src.train.train_cvae --modelname cvae_transformer_rc_rcxyz_kl --pose_rep rot6d --lambda_kl 1e-5 --jointstype vertices --batch_size 20 --num_frames 60 --num_layers 8 --lr 0.0001 --glob --translation --no-vertstrans --dataset humanact12 --num_epochs 5000 --snapshot 100 --folder exps/humanact12
-```
-
-### UESTC
-#### Training
-```bash
-python -m src.train.train_cvae --modelname cvae_transformer_rc_rcxyz_kl --pose_rep rot6d --lambda_kl 1e-5 --jointstype vertices --batch_size 20 --num_frames 60 --num_layers 8 --lr 0.0001 --glob --translation --no-vertstrans --dataset uestc --num_epochs 1000 --snapshot 100 --folder exps/uestc
-```
-
-### Evaluation
-```bash
-python -m src.evaluate.evaluate_cvae PATH/TO/checkpoint_XXXX.pth.tar --batch_size 64 --niter 20
-```
-This script will evaluate the trained model, on the epoch ``XXXX``, with 20 different seeds, and put all the results in ``PATH/TO/evaluation_metrics_XXXX_all.yaml``.
-
-If you want to get a table with mean and interval, you can use this script:
-
-```bash
-python -m src.evaluate.tables.easy_table PATH/TO/evaluation_metrics_XXXX_all.yaml
-```
+Flying Pose 적용 코드
+{flyingpose 코드 추가}
 
 
-### Pretrained models
-You can download pretrained models with this script:
-```bash
-bash prepare/download_pretrained_models.sh
-```
+학습이 완료된 후, 생성된 동작들을 확인함. 그러나 렌더링 시 카메라의 perspective가 의도치 않은 방향으로 고정되어, 유니티를 통해 해당 동작들을 변환 및 시각화함.
 
+{결과 사진 추가}
 
-### Visualization
-#### Grid of stick figures
-```bash
- python -m src.visualize.visualize_checkpoint PATH/TO/CHECKPOINT.tar --num_actions_to_sample 5  --num_samples_per_action 5
-```
-
-Each line corresponds to an action.
-The first column on the right represents a movement of the dataset, and the second column represents the reconstruction of the movement (via encoding/decoding). All other columns on the left are generations with random noise.
-
-##### Example
-![ntugrid.gif](visuals/ntugrid.gif#gh-light-mode-only)![ntugrid.gif](visuals/ntugrid_neg.gif#gh-dark-mode-only)
-
-
-### Generating and rendering SMPL meshes
-#### Additional dependencies
-``` bash
-pip install trimesh
-pip install pyrender
-pip install imageio-ffmpeg
-```
-
-#### Generate motions
-```bash
-python -m src.generate.generate_sequences PATH/TO/CHECKPOINT.tar --num_samples_per_action 10 --cpu
-```
-
-It will generate 10 samples per action, and store them in ``PATH/TO/generation.npy``.
-
-#### Render motions
-``` bash
-python -m src.render.rendermotion PATH/TO/generation.npy
-```
-
-It will render the sequences into this folder ``PATH/TO/generation/``.
-
-##### Examples
-
-| Pickup                                                   | Raising arms                                                   | High knee running                                                   | Bending torso                                             | Knee raising |
-|:--------------------------------------------------------:|:--------------------------------------------------------------:|:-------------------------------------------------------------------:|-----------------------------------------------------------|--------------|
-| <img src="visuals/pickup.gif#gh-light-mode-only" height="270" /> <img src="visuals/pickup_neg.gif#gh-dark-mode-only" height="270" /> | <img src="visuals/raising_arms.gif#gh-light-mode-only" height="270" /> <img src="visuals/raising_arms_neg.gif#gh-dark-mode-only" height="270" /> | <img src="visuals/high_knee_running.gif#gh-light-mode-only" height="270" /> <img src="visuals/high_knee_running_neg.gif#gh-dark-mode-only" height="270" /> | <img src="visuals/bending.gif#gh-light-mode-only" height="270" /> <img src="visuals/bending_neg.gif#gh-dark-mode-only" height="270" /> | <img src="visuals/knee_raising.gif#gh-light-mode-only" height="270" /> <img src="visuals/knee_raising_neg.gif#gh-dark-mode-only" height="270" />             |
-
-
-
-### Overview of the available models
-#### List of models
-
-| modeltype | architecture | losses |
-|:---------:|:------------:|:------:|
-| cvae      | fc           | rc     |
-|           | gru          | rcxyz  |
-|           | transformer  | kl     |
-
-
-
-### Construct a model
-Follow this: ``{modeltype}_{architecture} + "_".join(*losses)``
-
-For example for the cvae model with Transformer encoder/decoder and with rc, rcxyz and kl loss, you can use: ``--modelname cvae_transformer_rc_rcxyz_kl``.
-
-
-## License
-This code is distributed under an [MIT LICENSE](LICENSE).
-
-Note that our code depends on other libraries, including SMPL, SMPL-X, PyTorch3D, and uses datasets which each have their own respective licenses that must also be followed.
+## 부족한 점
+비행 동작에서 중요한 점은 공중에 떠 있는 것뿐만 아니라, 비행 궤적을 포함해야 더 자연스러운 결과를 얻을 수 있었음.
+이를 해결하기 위해 3차원 궤적을 생성하고 비행 동작을 함께 적용하는 방법을 추가 연구할 예정.
