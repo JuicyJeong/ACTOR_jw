@@ -8,7 +8,9 @@ def get_dataset(name="ntu13"):
     elif name == "humanact12":
         from .humanact12poses import HumanAct12Poses
         return HumanAct12Poses
-
+    elif name == "flying_poses":
+        from .flying_poses import flying_pose_dataset
+        return flying_pose_dataset
 
 def get_datasets(parameters):
     name = parameters["dataset"]
