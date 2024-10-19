@@ -6,6 +6,7 @@ This script is borrowed from https://github.com/mkocabas/VIBE
 
 import math
 import trimesh
+import trimesh.transformations as transformations
 import pyrender
 import numpy as np
 from pyrender.constants import RenderFlags
@@ -133,6 +134,10 @@ class Renderer:
         mesh_node = self.scene.add(mesh, 'mesh')
 
         camera_pose = np.eye(4)
+
+        rotation_matrix = transformations.rotation_matrix(np.radians(45), [0, 1, 0])  # y축을 기준으로 45도 회전
+        camera_pose[:3, :3] = rotation_matrix[:3, :3]
+        
         cam_node = self.scene.add(camera, pose=camera_pose)
 
         if self.wireframe:

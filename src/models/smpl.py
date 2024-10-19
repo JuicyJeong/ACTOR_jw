@@ -71,7 +71,7 @@ class SMPL(_SMPLLayer):
         self.register_buffer('J_regressor_extra', torch.tensor(J_regressor_extra, dtype=torch.float32))
         vibe_indexes = np.array([JOINT_MAP[i] for i in JOINT_NAMES])
         a2m_indexes = vibe_indexes[action2motion_joints]
-        smpl_indexes = np.arange(24)
+        smpl_indexes = np.arange(22)
         a2mpl_indexes = np.unique(np.r_[smpl_indexes, a2m_indexes])
 
         self.maps = {"vibe": vibe_indexes,
@@ -86,7 +86,7 @@ class SMPL(_SMPLLayer):
         all_joints = torch.cat([smpl_output.joints, extra_joints], dim=1)
 
         output = {"vertices": smpl_output.vertices}
-
+        # print("SMPL 레이어 클래스 진입 확인 ")
         for joinstype, indexes in self.maps.items():
             output[joinstype] = all_joints[:, indexes]
             
