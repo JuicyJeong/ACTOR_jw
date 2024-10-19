@@ -10,8 +10,6 @@ from src.models.get_model import get_model
 from src.parser.generate import parser
 import src.utils.fixseed  # noqa
 
-import src.utils.rotation_conversions as geometry #jw
-
 plt.switch_backend('agg')
 
 
@@ -109,53 +107,7 @@ def generate_actions(beta, model, dataset, epoch, params, folder, num_frames=60,
             generation["output_xyz"] = model.rot2xyz(generation["output"],
                                                      generation["mask"], vertstrans=vertstrans,
                                                      beta=beta)
-            # output = generation["output_xyz"].reshape(nspa, nats, *generation["output_xyz"].shape[1:]).cpu().numpy()
             output = generation["output_xyz"].reshape(nspa, nats, *generation["output_xyz"].shape[1:]).cpu().numpy()
-            print(type(output))
-            print(output.shape)
-            output = generation["output"]
-            print(type(output))
-            print(output.shape)
-            '''
-            <class 'numpy.ndarray'>
-            (10, 5, 22, 3, 60)
-            <class 'torch.Tensor'>
-            torch.Size([50, 24, 6, 60])
-
-            '''
-            # jw_6drot = output[0,0,:,0]
-            # print(jw_6drot)
-
-            # 텐서의 형태를 유지한채로 변환 수행
-            B, P, _, F = output.shape
-
-            # (50 * 24 * 60, 6) 형태로 변환
-            flattened_tensor = output.permute(0, 1, 3, 2).reshape(-1, 6)
-
-            # 6D 회전 벡터를 3x3 회전 행렬로 변환
-            rot_matrices = geometry.rotation_6d_to_matrix(flattened_tensor)
-
-            # 3x3 회전 행렬을 축-각(axis-angle) 표현으로 변환
-            axis_angles = torch.stack([geometry.matrix_to_axis_angle(rot_matrix) for rot_matrix in rot_matrices])
-
-            # (50, 24, 3, 60) 형태로 변환
-            reshaped_axis_angles = axis_angles.view(B, P, F, 3).permute(0, 1, 3, 2)
-
-            # 변환된 텐서 확인
-            print(reshaped_axis_angles.shape)  # Expected shape: (50, 24, 3, 60)
-
-            # (10, 5, 24, 3, 60) 형태로 변환
-            final_tensor = reshaped_axis_angles.view(10, 5, 24, 3, 60)
-
-            # NumPy ndarray로 변환
-            final_array = final_tensor.numpy()
-
-            # .npy 파일로 저장
-            np.save('output.npy', final_array)
-
-            print(f"Saved array shape: {final_array.shape}")
-
-            exit()
 
     if not onlygen:
         output = np.stack([visualization["output_xyz"].cpu().numpy(),
