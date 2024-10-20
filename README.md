@@ -1,7 +1,7 @@
 # **Flying-motion Generation via Motion Dataset Adaptation**
 
 - 이 프로젝트는 Action-label based Motion Generation Network인 **ACTOR**를 커스텀 데이터셋으로 재학습해 결과를 확인한 프로젝트임.
-- 데이터 학습을 위해 네트워크의 일부를 수정했고, 원본 리드미는 [ACTOR_README.md](https://github.com/JuicyJeong/ACTOR_jw/ACTOR_README.md)에서 확인할 수 있음.
+- 데이터 학습을 위해 네트워크의 일부를 수정했고, 원본 리드미는 [ACTOR_README.md](https://github.com/JuicyJeong/ACTOR_jw/blob/master/ACTOR_README.md)에서 확인할 수 있음.
 - 이 내용을 바탕으로 **VRST 2024 학회 포스터 세션**에 참여했음. 자세한 내용은 [Paper Link](https://dl.acm.org/doi/10.1145/3641825.3689507)에서 확인할 수 있음.
 
 ## 프로젝트에서 기여한 점:
@@ -17,13 +17,14 @@
 ## 제안 방법
 
 이 프로젝트는 아바타의 비행 동작을 동작 생성 네트워크에서 생성할 수 있도록 기존의 데이터셋을 변형해 일부를 샘플링한 후, 적은 양의 데이터를 동작 생성 네트워크에 훈련시켜 결과를 확인함.
+[pipeline.png](assets/pipeline.png)
 {파이프라인 사진 입력}
 
 전체 데이터셋에 대해 일괄적으로 전처리를 진행함.
 
 전처리는 간단하며, SMPL 포맷 형식의 아바타에서 Pelvis 관절과 Neck 관절의 각도를 조절하여 허공에 떠 있는 동작처럼 보이게 함.
 
-{여기에 관련된 사진 추가}
+[fig4.png](assets/fig4.png)
 
 python
 Rotate AMASS 코드
@@ -55,5 +56,5 @@ Flying Pose 적용 코드
 {결과 사진 추가}
 
 ## 부족한 점
-비행 동작에서 중요한 점은 공중에 떠 있는 것뿐만 아니라, 비행 궤적을 포함해야 더 자연스러운 결과를 얻을 수 있었음.
-이를 해결하기 위해 3차원 궤적을 생성하고 비행 동작을 함께 적용하는 방법을 추가 연구할 예정.
+* 비행 동작에서 중요한 점은 공중에 떠 있는 것뿐만 아니라, 비행 궤적을 포함해야 더 자연스러운 결과를 얻을 수 있었음.
+* 이를 해결하기 위해 3차원 궤적을 생성하고 비행 동작을 함께 적용하는 방법을 추가 연구할 예정.
