@@ -26,7 +26,7 @@
 
 ![fig4.png](assets/fig4.png)
 
-[관련 코드](https://github.com/JuicyJeong/ACTOR_jw/blob/master/src/datasets/datapreprop/rotatate_amass.ipynb)
+[관련 코드](https://github.com/JuicyJeong/ACTOR_jw/blob/master/src/datasets/datapreprop/roatate_amass.ipynb)
 
 ## 데이터셋 샘플링 및 구축
 비행 동작처럼 보이는 동작들을 임의로 선정한 action label을 바탕으로 소규모 데이터셋을 샘플링함.
@@ -41,7 +41,7 @@
 
 * 텍스트 병합 후 검색 코드
 
-* [mergetext.ipynb](https://github.com/JuicyJeong/ACTOR_jw/blob/master/src/datasets/datapreprop/mergetext.ipynb)
+* [mergetext.ipynb](https://github.com/JuicyJeong/ACTOR_jw/blob/master/src/datasets/datapreprop/mergetxt.ipynb)
 
 * [find_KEYWORD_npz.ipynb](https://github.com/JuicyJeong/ACTOR_jw/blob/master/src/datasets/datapreprop/find_KEYWORD_npz.ipynb)
 ## 데이터 학습 및 결과
