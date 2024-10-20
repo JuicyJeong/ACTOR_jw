@@ -26,7 +26,7 @@
 
 ![fig4.png](assets/fig4.png)
 
-[관련 코드](https://github.com/JuicyJeong/ACTOR_jw/blob/master/datasets/datapreprop/rotatate_amass.ipynb)
+[관련 코드](https://github.com/JuicyJeong/ACTOR_jw/blob/src/master/datasets/datapreprop/rotatate_amass.ipynb)
 
 ## 데이터셋 샘플링 및 구축
 비행 동작처럼 보이는 동작들을 임의로 선정한 action label을 바탕으로 소규모 데이터셋을 샘플링함.
@@ -40,14 +40,15 @@
 모든 텍스트 설명을 하나의 딕셔너리 형태로 병합한 후, 라벨 키워드를 검색해 해당 데이터를 샘플링하여 데이터셋을 구성함.
 
 * 텍스트 병합 후 검색 코드
-[mergetext.ipynb](https://github.com/JuicyJeong/ACTOR_jw/blob/master/datasets/datapreprop/mergetext.ipynb)
 
-[find_KEYWORD_npz.ipynb](https://github.com/JuicyJeong/ACTOR_jw/blob/master/datasets/datapreprop/find_KEYWORD_npz.ipynb)
+[mergetext.ipynb](https://github.com/JuicyJeong/ACTOR_jw/blob/master/src/datasets/datapreprop/mergetext.ipynb)
+
+* [find_KEYWORD_npz.ipynb](https://github.com/JuicyJeong/ACTOR_jw/blob/master/src/datasets/datapreprop/find_KEYWORD_npz.ipynb)
 ## 데이터 학습 및 결과
 모션 생성 네트워크에 커스텀 데이터셋을 학습시키기 위해 별도의 세팅이 필요했으며, 데이터 입력을 위한 스크립트 작업을 진행함.
 
 Flying Pose 적용 코드
-[flying_poses.py](https://github.com/JuicyJeong/ACTOR_jw/blob/master/datasets/flying_poses.py)
+[flying_poses.py](https://github.com/JuicyJeong/ACTOR_jw/blob/master/src/datasets/flying_poses.py)
 
 
 학습이 완료된 후, 생성된 동작들을 확인함. 그러나 렌더링 시 카메라의 perspective가 의도치 않은 방향으로 고정되어, 유니티를 통해 해당 동작들을 변환 및 시각화함.
