@@ -17,14 +17,14 @@
 ## 제안 방법
 
 이 프로젝트는 아바타의 비행 동작을 동작 생성 네트워크에서 생성할 수 있도록 기존의 데이터셋을 변형해 일부를 샘플링한 후, 적은 양의 데이터를 동작 생성 네트워크에 훈련시켜 결과를 확인함.
-[pipeline.png](assets/pipeline.png)
+![pipeline.png](assets/pipeline.png)
 {파이프라인 사진 입력}
 
 전체 데이터셋에 대해 일괄적으로 전처리를 진행함.
 
 전처리는 간단하며, SMPL 포맷 형식의 아바타에서 Pelvis 관절과 Neck 관절의 각도를 조절하여 허공에 떠 있는 동작처럼 보이게 함.
 
-[fig4.png](assets/fig4.png)
+![fig4.png](assets/fig4.png)
 
 python
 Rotate AMASS 코드
