@@ -18,7 +18,7 @@
 
 이 프로젝트는 아바타의 비행 동작을 동작 생성 네트워크에서 생성할 수 있도록 기존의 데이터셋을 변형해 일부를 샘플링한 후, 적은 양의 데이터를 동작 생성 네트워크에 훈련시켜 결과를 확인함.
 ![pipeline.png](assets/pipeline.png)
-{파이프라인 사진 입력}
+
 
 전체 데이터셋에 대해 일괄적으로 전처리를 진행함.
 
@@ -26,9 +26,7 @@
 
 ![fig4.png](assets/fig4.png)
 
-python
-Rotate AMASS 코드
-{여기에 rotate amass 코드 추가}
+[관련 코드](https://github.com/JuicyJeong/ACTOR_jw/blob/master/datasets/datapreprop/rotatate_amass.ipynb)
 
 ## 데이터셋 샘플링 및 구축
 비행 동작처럼 보이는 동작들을 임의로 선정한 action label을 바탕으로 소규모 데이터셋을 샘플링함.
@@ -42,18 +40,19 @@ Rotate AMASS 코드
 모든 텍스트 설명을 하나의 딕셔너리 형태로 병합한 후, 라벨 키워드를 검색해 해당 데이터를 샘플링하여 데이터셋을 구성함.
 
 * 텍스트 병합 후 검색 코드
-{텍스트 병합 및 검색 코드 추가}
+[mergetext.ipynb](https://github.com/JuicyJeong/ACTOR_jw/blob/master/datasets/datapreprop/mergetext.ipynb)
 
+[find_KEYWORD_npz.ipynb](https://github.com/JuicyJeong/ACTOR_jw/blob/master/datasets/datapreprop/find_KEYWORD_npz.ipynb)
 ## 데이터 학습 및 결과
 모션 생성 네트워크에 커스텀 데이터셋을 학습시키기 위해 별도의 세팅이 필요했으며, 데이터 입력을 위한 스크립트 작업을 진행함.
 
 Flying Pose 적용 코드
-{flyingpose 코드 추가}
+[flying_poses.py](https://github.com/JuicyJeong/ACTOR_jw/blob/master/datasets/flying_poses.py)
 
 
 학습이 완료된 후, 생성된 동작들을 확인함. 그러나 렌더링 시 카메라의 perspective가 의도치 않은 방향으로 고정되어, 유니티를 통해 해당 동작들을 변환 및 시각화함.
 
-{결과 사진 추가}
+![fig4.png](assets/vis_result.png)
 
 ## 부족한 점
 * 비행 동작에서 중요한 점은 공중에 떠 있는 것뿐만 아니라, 비행 궤적을 포함해야 더 자연스러운 결과를 얻을 수 있었음.
